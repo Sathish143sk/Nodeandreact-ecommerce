@@ -1,0 +1,12 @@
+.full-page-condent{
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+.page-navbar{
+    position: fixed;
+    display: flex;
+}
+.page-content{
+    padding-left: 15px;
+    padding-right: 15px;
+}
