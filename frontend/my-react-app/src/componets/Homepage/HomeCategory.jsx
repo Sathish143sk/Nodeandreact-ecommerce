@@ -1,100 +1,83 @@
 import React from "react";
-import { Carousel, Card } from "react-bootstrap";
 
 const categories = [
+  { name: "Minutes", image: "https://via.placeholder.com/60x60" },
+  { name: "Mobiles & Tablets", image: "https://via.placeholder.com/60x60" },
   {
-    name: "Motorola G85 5G",
-    price: "from 14999*",
-    image: "https://via.placeholder.com/150x200",
+    name: "Fashion",
+    image: "https://via.placeholder.com/60x60",
+    dropdown: true,
   },
   {
-    name: "Motorola G45 5G",
-    price: "From 10999*",
-    image: "https://via.placeholder.com/150x200",
+    name: "Electronics",
+    image: "https://via.placeholder.com/60x60",
+    dropdown: true,
   },
   {
-    name: "Vivo T4 5G",
-    price: "from 20499*",
-    image: "https://via.placeholder.com/150x200",
+    name: "Home & Furniture",
+    image: "https://via.placeholder.com/60x60",
+    dropdown: true,
   },
+  { name: "TVs & Appliances", image: "https://via.placeholder.com/60x60" },
+  { name: "Flight Bookings", image: "https://via.placeholder.com/60x60" },
   {
-    name: "Realme P3 5G",
-    price: "From 14999*",
-    image: "https://via.placeholder.com/150x200",
+    name: "Beauty, Food..",
+    image: "https://via.placeholder.com/60x60",
+    dropdown: true,
   },
-  {
-    name: "Oppo K13 5G",
-    price: "from 16499*",
-    image: "https://via.placeholder.com/150x200",
-  },
-  {
-    name: "POCO F7 5G",
-    price: "from 29999*",
-    image: "https://via.placeholder.com/150x200",
-  },{
-    name: "Realme P3 5G",
-    price: "From 14999*",
-    image: "https://via.placeholder.com/150x200",
-  },
-  {
-    name: "Oppo K13 5G",
-    price: "from 16499*",
-    image: "https://via.placeholder.com/150x200",
-  },
-  {
-    name: "POCO F7 5G",
-    price: "from 29999*",
-    image: "https://via.placeholder.com/150x200",
-  },
+  { name: "Grocery", image: "https://via.placeholder.com/60x60" },
 ];
 
-const CategorySection = () => {
-  // Group categories into slides of 3 per carousel item
-  const chunkArray = (arr, size) => {
-    return arr.reduce((chunks, item, index) => {
-      const chunkIndex = Math.floor(index / size);
-      if (!chunks[chunkIndex]) chunks[chunkIndex] = [];
-      chunks[chunkIndex].push(item);
-      return chunks;
-    }, []);
-  };
-
-  const categoryChunks = chunkArray(categories, 8);
-
+const CategoryNav = () => {
   return (
-    <div className="my-4">
-      <h4 className="mb-3 px-2">Best Deals on All Category</h4>
-      <Carousel indicators={false} controls={true} interval={null}>
-        {categoryChunks.map((chunk, index) => (
-          <Carousel.Item key={index}>
-            <div className="d-flex justify-content-center gap-4">
-              {chunk.map((cat, i) => (
-                <Card
-                  key={i}
-                  className="text-center border-1"
-                  style={{ width: "250px" }}
-                >
-                  <Card.Img
-                    variant="top"
-                    src={cat.image}
-                    style={{ height: "200px", objectFit: "contain" }}
-                  />
-                  <Card.Body className="p-2">
-                    <Card.Title style={{ fontSize: "14px" }}>
-                      {cat.name}
-                    </Card.Title>
-                    <Card.Text style={{ fontSize: "13px", color: "red" }}>
-                      {cat.price}
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          </Carousel.Item>
-        ))}
-      </Carousel>
+    <div style={styles.container}>
+      {categories.map((cat, index) => (
+        <div key={index} style={styles.item}>
+          <img src={cat.image} alt={cat.name} style={styles.image} />
+          <div style={styles.label}>
+            {cat.name} {cat.dropdown && <span style={styles.arrow}>▼</span>}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default CategorySection;
+const styles = {
+  container: {
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    background: "white",
+    padding: "15px 10px",
+    borderRadius: "4px",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+    marginTop:"20px",
+  },
+  item: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    cursor: "pointer",
+    textAlign: "center",
+    fontSize: "14px",
+    color: "#000",
+  },
+  image: {
+    width: "60px",
+    height: "60px",
+    objectFit: "contain",
+    marginBottom: "5px",
+  },
+  label: {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
+    fontWeight: 500,
+  },
+  arrow: {
+    fontSize: "10px",
+  },
+};
+
+export default CategoryNav;
