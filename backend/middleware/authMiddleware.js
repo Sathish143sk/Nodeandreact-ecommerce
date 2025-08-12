@@ -11,7 +11,7 @@ const is_User = async (req, res, next) => {
     try {
       // Extract token
       token = req.headers.authorization.split(" ")[1];
-      console.log("Received Token:", token);
+      console.log("Received user Token:", token);
 
       console.log("process.env.JWT_SECRET:", process.env.JWT_SECRET);
       // Verify token

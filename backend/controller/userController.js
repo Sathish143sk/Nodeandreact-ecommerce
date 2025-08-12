@@ -50,8 +50,33 @@ const userLists=async(req,res) => {
         res.status(500).json({ message: "Failed to fetch users" });
     }
 }
+const userByid=async (req,res) => {
+    try {
+       const user = await User.findById(req.params.id).select("-password");
+        res.status(200).json(user);
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({ message: "Failed to fetch user" });
+    }
+}
+const updateUser = async (req, res) => {
+  try {
+    const { name, email, phone } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, phone },
+      { new: true }
+    ).select("-password");
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update profile" });
+  }
+};
+
 module.exports={
     userRegister,
     userLogin,
     userLists,
+    userByid,
+    updateUser,
 };

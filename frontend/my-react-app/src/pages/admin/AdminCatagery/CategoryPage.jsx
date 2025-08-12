@@ -177,8 +177,8 @@ const CategoryPage = () => {
               <Table striped bordered hover responsive>
                 <thead>
                   <tr>
-                    <th>Image</th>
                     <th>Name</th>
+                    <th>Image</th>
                     <th>Description</th>
                     <th>Actions</th>
                   </tr>
@@ -186,6 +186,7 @@ const CategoryPage = () => {
                 <tbody>
                   {categories.map((cat) => (
                     <tr key={cat._id}>
+                      <td>{cat.name}</td>
                       <td>
                         {cat.image && (
                           <img
@@ -199,7 +200,7 @@ const CategoryPage = () => {
                           />
                         )}
                       </td>
-                      <td>{cat.name}</td>
+
                       <td>{cat.description}</td>
                       <td>
                         <div className="d-flex gap-2">

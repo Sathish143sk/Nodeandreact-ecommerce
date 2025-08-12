@@ -25,9 +25,10 @@ const LoginPage = () => {
         form
       );
       console.log("Login response:", res.data);
-      setMessage("Login successful!");
-      navigate("/");
       localStorage.setItem("userToken", res.data.token); // store token
+      localStorage.setItem("userId", res.data._id);
+      setMessage("Login successful!");
+      navigate("/user/profile");
     } catch (err) {
       console.log(err);
       setMessage(err.response?.data?.message || "Error logging in");

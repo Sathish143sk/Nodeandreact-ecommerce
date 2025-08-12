@@ -8,6 +8,7 @@ const {
 } = require("../controller/productController");
 
 const router = express.Router();
+
 const isAdmin = require("../middleware/adminMiddleware");
 const upload = require("../multer/productMulter");
 

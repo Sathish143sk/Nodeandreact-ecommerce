@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Container, Spinner } from "react-bootstrap";
 import axios from "axios";
 import AdminSidebar from "../../../componets/AdminSidebar";
-
+import { Link } from "react-router-dom";
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,9 +35,11 @@ const ProductsPage = () => {
       <AdminSidebar />
       <Container style={{ marginLeft: "220px", padding: "30px" }}>
         <h2 className="mb-4">Manage Products</h2>
-        <Button variant="primary" size="sm" className="me-2">
-          Add Product
-        </Button>
+        <Link to="/admin/addProducts" style={{ textDecoration: "none" }}>
+          <Button variant="primary" size="sm" className="me-2">
+            Add Product
+          </Button>
+        </Link>
         {loading ? (
           <div
             className="d-flex justify-content-center align-items-center"
@@ -70,14 +72,14 @@ const ProductsPage = () => {
                   <td>{product.countInStock}</td>
                   <td>
                     <img
-                        src={`http://localhost:5000/uploads/products/${product.image}`}
-                        alt={product.name}
-                        style={{
-                          width: "60px",
-                          height: "60px",
-                          objectFit: "cover",
-                        }}
-                      />
+                      src={`http://localhost:5000/uploads/products/${product.image}`}
+                      alt={product.name}
+                      style={{
+                        width: "60px",
+                        height: "60px",
+                        objectFit: "cover",
+                      }}
+                    />
                   </td>
                   <td>
                     <Button variant="warning" size="sm" className="me-2">

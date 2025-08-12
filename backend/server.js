@@ -5,6 +5,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes= require("./routes/categoryRoutes");
 const userRoutes=require("./routes/userRoutes");
+const cartRoutes=require("./routes/cartRoutes");
 const cors = require("cors");
 const path = require("path"); 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/admin",adminRoutes);
 app.use("/api/admin/product",productRoutes);
 app.use("/api/admin/category",categoryRoutes);
+app.use("/api/user/cart",cartRoutes)
 app.use("/api/user",userRoutes);
 
 const PORT = process.env.PORT || 5000;

@@ -5,13 +5,18 @@ import AdminDashboard from "../pages/admin/AdminDashboard";
 import CategoryPage from "../pages/admin/AdminCatagery/CategoryPage";
 import ProductsPage from "../pages/admin/AdminProduct/ProductsPage";
 import UserPage from "../pages/admin/AdminPublicUser/UserList";
+import AddProducts from "../pages/admin/AdminProduct/AddProduct";
+
 const AdminRoutes = () => (
   <>
     <Route path="/admin/login" element={<AdminLogin />} />
     <Route path="/admin/register" element={<AdminRegister />} />
     <Route path="/admin/dashboard" element={<AdminDashboard />} />
     <Route path="/admin/category" element={<CategoryPage />} />
+
     <Route path="/admin/products" element={<ProductsPage />} />
+    <Route path="/admin/addProducts" element={<AddProducts />} />
+
     <Route path="/admin/users" element={<UserPage />} />
   </>
 );

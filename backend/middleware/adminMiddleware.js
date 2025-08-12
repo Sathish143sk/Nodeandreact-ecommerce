@@ -15,7 +15,7 @@ const is_Admin = async (req, res, next) => {
 
       // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+      console.log("Decoded token payload:", decoded);
       // Attach admin to request (without password)
       req.admin = await Admin.findById(decoded.id).select("-password");
 
