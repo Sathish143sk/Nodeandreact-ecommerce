@@ -3,7 +3,7 @@ import { Carousel, Card, Spinner } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import axios from "axios";
 
-const UserProductsCarousel = () => {
+const UserLaptopCarousel = () => {
   const carouselRef = useRef(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ const UserProductsCarousel = () => {
 
         // Optional: filter only visible products if backend sends a flag
         const visibleProducts = response.data.filter(
-          (p) => p.isVisible !== false && p.category.name === "Mobile"
+          (p) => p.isVisible !== false && p.category.name === "Speaker"
         );
 
         setProducts(visibleProducts);
@@ -61,7 +61,7 @@ const UserProductsCarousel = () => {
       style={{ backgroundColor: "white", padding: "15px" }}
     >
       <div className="d-flex justify-content-between align-items-center mb-3 px-2">
-        <h4 className="mb-0">Mobile Best Deals</h4>
+        <h4 className="mb-0">speaker Best Deals</h4>
         <button
           style={{
             background: "#007bff",
@@ -148,4 +148,4 @@ const UserProductsCarousel = () => {
   );
 };
 
-export default UserProductsCarousel;
+export default UserLaptopCarousel;

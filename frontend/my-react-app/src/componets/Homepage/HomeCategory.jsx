@@ -1,32 +1,9 @@
 import React from "react";
-
-const categories = [
-  { name: "Minutes", image: "https://via.placeholder.com/60x60" },
-  { name: "Mobiles & Tablets", image: "https://via.placeholder.com/60x60" },
-  {
-    name: "Fashion",
-    image: "https://via.placeholder.com/60x60",
-    dropdown: true,
-  },
-  {
-    name: "Electronics",
-    image: "https://via.placeholder.com/60x60",
-    dropdown: true,
-  },
-  {
-    name: "Home & Furniture",
-    image: "https://via.placeholder.com/60x60",
-    dropdown: true,
-  },
-  { name: "TVs & Appliances", image: "https://via.placeholder.com/60x60" },
-  { name: "Flight Bookings", image: "https://via.placeholder.com/60x60" },
-  {
-    name: "Beauty, Food..",
-    image: "https://via.placeholder.com/60x60",
-    dropdown: true,
-  },
-  { name: "Grocery", image: "https://via.placeholder.com/60x60" },
-];
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+const categories = () => {
+  
+}
 
 const CategoryNav = () => {
   return (

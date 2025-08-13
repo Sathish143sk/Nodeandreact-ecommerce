@@ -1,4 +1,8 @@
 const Product = require("../models/productModel");
+const csv = require("csv-parser");
+const fs = require("fs");
+const path = require("path");
+const Category = require("../models/categoryModel");
 
 // Create Product (with image upload)
 const createProduct = async (req, res) => {
@@ -83,6 +87,82 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Server Error" });
   }
 };
+  
+const bulkImportProduct= async (req,res) => {
+  try {
+    if (!req.file) {
+     return res.status(400).json({ message: "CSV file is required" });
+  }
+  const filePath = path.resolve(req.file.path);
+
+  if (!fs.existsSync(filePath)) {
+      return res.status(400).json({ message: "Uploaded file not found" });
+  }
+
+  const category = await Category.find({}, { name: 1 });
+  const categoryMap= {};
+  category.forEach(cat => {
+    categoryMap[cat.name.trim().toLowerCase()] = cat._id.toString();
+  });
+
+  const productsToInsert = [];
+  const invalidRows = [];
+
+  await new Promise((resolve,reject) => {
+    fs.createReadStream(filePath)
+    .pipe(csv())
+    .on("data",(row) => {
+      const normalizeRow ={};
+      Object.keys(row).forEach(key => {
+        const cleanKey = key.trim().toLowerCase().replace(/"/g, "");
+        normalizeRow[cleanKey] =row[key]?.trim();
+      });
+      let categoryId = normalizeRow["category"];
+          if (!categoryId || !categoryId.match(/^[a-fA-F0-9]{24}$/)) {
+            const mappedId = categoryMap[categoryId?.toLowerCase() || ""];
+            categoryId = mappedId || null;
+          }
+          if (categoryId) {
+            productsToInsert.push({
+              name:normalizeRow["name"] || "",
+              description:normalizeRow["description"] || "",
+              price:parseFloat(normalizeRow["price"]) || 0,
+              category:categoryId,
+              countInStock:parseInt(normalizeRow["countinstock"]) || 0,
+              image:normalizeRow["image"] || "default.png",
+            });
+          }else {
+            invalidRows.push(normalizeRow);
+            console.warn(` Invalid category for product: ${normalizeRow["name"]}`);
+          }
+    })
+    .on("end",resolve)
+    .on("error",reject)
+  });
+  if (productsToInsert.length === 0) {
+      return res.status(400).json({
+        message: "No valid products to insert. Check your CSV data.",
+        invalidRows,
+      });
+    }
+    const insertedProducts = await Product.insertMany(productsToInsert);
+
+    fs.unlink(filePath, (err) => {
+      if (err) console.warn("Could not delete file:", err);
+    });
+    
+    res.status(201).json({
+      message: `Successfully imported ${insertedProducts.length} products.`,
+      insertedProducts,
+      invalidRows,
+    });
+  } catch (error) {
+    console.error("Bulk import error:", error);
+    res.status(500).json({ message: "Server error during bulk import." });
+  }
+}
+
+
 
 module.exports = {
   createProduct,
@@ -90,4 +170,5 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
+  bulkImportProduct,
 };

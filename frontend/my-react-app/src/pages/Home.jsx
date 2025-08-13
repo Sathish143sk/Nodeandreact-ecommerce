@@ -4,7 +4,8 @@ import HomreNavbar from "../componets/Homepage/HomeNavbar";
 import Herosection from "../componets/Homepage/Herosection";
 import Categroysection from "../componets/Homepage/HomeCategory";
 import HomeProducts from "../componets/Homepage/HomeProducts";
-
+import LatopProducts from "../componets/Homepage/LaptopProducts";
+import SpeakerProduct from "../componets/Homepage/speakerProduct";
 const Home = () => {
   return (
     <div className="full-page-condent">
@@ -23,14 +24,14 @@ const Home = () => {
           <HomeProducts />
         </div>
         <div>
-          <HomeProducts />
+          <LatopProducts />
         </div>
         <div>
-          <HomeProducts />
+          <SpeakerProduct />
         </div>
       </div>
     </div>
   );
 };
 
-export default Home;  
+export default Home;

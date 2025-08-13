@@ -6,7 +6,7 @@ import CategoryPage from "../pages/admin/AdminCatagery/CategoryPage";
 import ProductsPage from "../pages/admin/AdminProduct/ProductsPage";
 import UserPage from "../pages/admin/AdminPublicUser/UserList";
 import AddProducts from "../pages/admin/AdminProduct/AddProduct";
-
+import UpdateProduct from "../pages/admin/AdminProduct/UpdateProduct";
 const AdminRoutes = () => (
   <>
     <Route path="/admin/login" element={<AdminLogin />} />
@@ -16,7 +16,7 @@ const AdminRoutes = () => (
 
     <Route path="/admin/products" element={<ProductsPage />} />
     <Route path="/admin/addProducts" element={<AddProducts />} />
-
+    <Route path="/admin/updateProducts/:id" element={<UpdateProduct />} />
     <Route path="/admin/users" element={<UserPage />} />
   </>
 );

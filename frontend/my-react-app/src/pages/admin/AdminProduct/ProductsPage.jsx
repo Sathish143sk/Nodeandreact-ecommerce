@@ -82,13 +82,26 @@ const ProductsPage = () => {
                     />
                   </td>
                   <td>
-                    <Button variant="warning" size="sm" className="me-2">
-                      Edit
-                    </Button>
-                    <Button variant="primary" size="sm" className="me-2">
-                      View
-                    </Button>
-                    <Button variant="danger" size="sm">
+                    {/* Edit Button */}
+                    <Link to={`/admin/updateProducts/${product._id}`}>
+                      <Button variant="warning" size="sm" className="me-2">
+                        Edit
+                      </Button>
+                    </Link>
+
+                    {/* View Button */}
+                    <Link to={"/admin/product"}>
+                      <Button variant="primary" size="sm" className="me-2">
+                        View
+                      </Button>
+                    </Link>
+
+                    {/* Delete Button */}
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleDelete(product._id)}
+                    >
                       Delete
                     </Button>
                   </td>
