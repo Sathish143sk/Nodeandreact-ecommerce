@@ -1,11 +1,38 @@
-import React from "react";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-const categories = () => {
-  
-}
 
 const CategoryNav = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchCategories = async () => {
+    try {
+      // If the endpoint is public, you can remove the token
+      const token = localStorage.getItem("adminToken");
+      const response = await axios.get(
+        "http://localhost:5000/api/category/getUserCategorys",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <p style={{ textAlign: "center" }}>Loading categories...</p>;
+  }
+
   return (
     <div style={styles.container}>
       {categories.map((cat, index) => (
@@ -29,7 +56,8 @@ const styles = {
     padding: "15px 10px",
     borderRadius: "4px",
     boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-    marginTop:"20px",
+    marginTop: "20px",
+    flexWrap: "wrap",
   },
   item: {
     display: "flex",
@@ -39,6 +67,7 @@ const styles = {
     textAlign: "center",
     fontSize: "14px",
     color: "#000",
+    margin: "10px",
   },
   image: {
     width: "60px",

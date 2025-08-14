@@ -45,19 +45,20 @@ const addToCart = async (req, res) => {
 // get cart fior id
 const getCartByUserId = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const cartItems = await Cart.find({ user: userId });  // find all cart items for user
+    const userId = req.user.id; // from middleware
+    const cartItems = await Cart.find({ user: userId });
 
-    if (!cartItems || cartItems.length === 0) {
-      return res.status(404).json({ message: "Cart not found" });
+    if (!cartItems.length) {
+      return res.status(200).json({ items: [] }); // empty cart
     }
 
     res.status(200).json({ items: cartItems });
   } catch (error) {
     console.error("Error fetching cart:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 const removeCartItem = async (req, res) => {
   try {

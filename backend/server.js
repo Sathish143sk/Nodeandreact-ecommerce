@@ -7,6 +7,8 @@ const categoryRoutes= require("./routes/categoryRoutes");
 const userRoutes=require("./routes/userRoutes");
 const cartRoutes=require("./routes/cartRoutes");
 const homeProducts=require("./routes/userProductRoutes");
+const homeCategory=require("./routes/userCategoryRoutes");
+const userAddress=require("./routes/addressUserRoutes");
 const cors = require("cors");
 const path = require("path"); 
 dotenv.config();
@@ -19,9 +21,12 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/admin",adminRoutes);
 app.use("/api/admin/product",productRoutes);
 app.use("/api/admin/category",categoryRoutes);
-app.use("/api/user/cart",cartRoutes)
+app.use("/api/user/cart",cartRoutes);
 app.use("/api/user",userRoutes);
 app.use("/api/product",homeProducts);
+app.use("/api/category",homeCategory);
+app.use("/api/user/address",userAddress);
+
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

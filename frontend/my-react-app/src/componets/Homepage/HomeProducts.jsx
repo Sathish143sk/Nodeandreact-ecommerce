@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Carousel, Card, Spinner } from "react-bootstrap";
+import { Carousel, Card, Spinner, Button } from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import axios from "axios";
 
@@ -8,26 +8,26 @@ const UserProductsCarousel = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState("");
+  const [cart, setCart] = useState([]);
 
+  // Fetch products
   useEffect(() => {
     const fetchUserProducts = async () => {
       try {
-        // Public endpoint, no token required if backend allows
         const response = await axios.get(
           "http://localhost:5000/api/product/getUserProducts",
           { headers: { "Cache-Control": "no-cache" } }
         );
 
-        // Optional: filter only visible products if backend sends a flag
         const visibleProducts = response.data.filter(
-          (p) => p.isVisible !== false && p.category.name === "Mobile"
+          (p) => p.isVisible !== false && p.category?.name === "Mobile"
         );
 
         setProducts(visibleProducts);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error.response || error);
         setErrorMsg("Failed to load products");
+      } finally {
         setLoading(false);
       }
     };
@@ -35,14 +35,59 @@ const UserProductsCarousel = () => {
     fetchUserProducts();
   }, []);
 
-  const chunkArray = (arr, size) => {
-    return arr.reduce((chunks, item, index) => {
+  // Fetch cart from backend
+  const fetchCart = async () => {
+    const token = localStorage.getItem("userToken");
+    const userId = localStorage.getItem("userId");
+
+    if (token && userId) {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/user/cart/getCartByUserId/${userId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setCart(res.data.items || []);
+        localStorage.setItem("cart", JSON.stringify(res.data.items || []));
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // Add to Cart handler
+  const handleAddToCart = async (product) => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("Please login to add items to cart");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/user/cart/addToCart",
+        { productId: product._id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("✅ Item added to cart!");
+      fetchCart();
+    } catch (error) {
+      console.error("Error adding to cart", error);
+      alert("❌ Failed to add item to cart");
+    }
+  };
+
+  // Group products into chunks for carousel
+  const chunkArray = (arr, size) =>
+    arr.reduce((chunks, item, index) => {
       const chunkIndex = Math.floor(index / size);
       if (!chunks[chunkIndex]) chunks[chunkIndex] = [];
       chunks[chunkIndex].push(item);
       return chunks;
     }, []);
-  };
 
   const productChunks = chunkArray(products, 6);
 
@@ -101,8 +146,15 @@ const UserProductsCarousel = () => {
                       {prod.name}
                     </Card.Title>
                     <Card.Text style={{ fontSize: "13px", color: "red" }}>
-                      {prod.price}
+                      ₹{prod.price}
                     </Card.Text>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleAddToCart(prod)}
+                    >
+                      Add to Cart
+                    </Button>
                   </Card.Body>
                 </Card>
               ))}
@@ -111,8 +163,11 @@ const UserProductsCarousel = () => {
         ))}
       </Carousel>
 
+      {/* Left Arrow */}
       <button
-        onClick={() => carouselRef.current.prev()}
+        onClick={() =>
+          document.querySelector(".carousel-control-prev")?.click()
+        }
         style={{
           position: "absolute",
           top: "50%",
@@ -128,8 +183,11 @@ const UserProductsCarousel = () => {
         <FaChevronLeft />
       </button>
 
+      {/* Right Arrow */}
       <button
-        onClick={() => carouselRef.current.next()}
+        onClick={() =>
+          document.querySelector(".carousel-control-next")?.click()
+        }
         style={{
           position: "absolute",
           top: "50%",
