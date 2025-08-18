@@ -31,6 +31,24 @@ const addAddress = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// Get single address by ID
+const getUserAddressById = async (req, res) => {
+  try {
+    const { id } = req.params; // address id
+    const userId = req.user.id;
+
+    const address = await Address.findOne({ _id: id, user: userId });
+
+    if (!address) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    res.status(200).json(address);
+  } catch (error) {
+    console.error("Error fetching address by id:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 // Get all addresses for a user
 const getUserAddresses = async (req, res) => {
@@ -96,4 +114,5 @@ module.exports={
     getUserAddresses,
     updateAddress,
     deleteAddress,
+    getUserAddressById,
 }

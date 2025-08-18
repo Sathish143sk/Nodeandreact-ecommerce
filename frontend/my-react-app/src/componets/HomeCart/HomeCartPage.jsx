@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Alert } from "react-bootstrap";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -30,6 +31,18 @@ const CartPage = () => {
   const token = localStorage.getItem("userToken");
   const userId = localStorage.getItem("userId");
 
+  // Calculate price details
+  const calculatePriceDetails = (items) => {
+    const price = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const discount = 229;
+    const coupon = 29;
+    const fee = 19;
+    const total = price - discount - coupon + fee;
+    const saved = discount + coupon;
+
+    setPriceDetails({ price, discount, coupon, fee, total, saved });
+  };
+
   // Fetch cart
   useEffect(() => {
     const fetchCart = async () => {
@@ -43,15 +56,7 @@ const CartPage = () => {
 
         const items = data.items || [];
         setCartItems(items);
-
-        const price = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-        const discount = 3229;
-        const coupon = 29;
-        const fee = 19;
-        const total = price - discount - coupon + fee;
-        const saved = discount + coupon;
-
-        setPriceDetails({ price, discount, coupon, fee, total, saved });
+        calculatePriceDetails(items);
       } catch (error) {
         console.error("Error fetching cart:", error);
       }
@@ -62,13 +67,9 @@ const CartPage = () => {
       try {
         const { data } = await axios.get(
           "http://localhost:5000/api/user/address/getUserAddresses",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (data.length > 0) {
-          setAddress(data[0]);
-        }
+        if (data.length > 0) setAddress(data[0]);
       } catch (err) {
         console.error("Error fetching address:", err);
       }
@@ -78,13 +79,54 @@ const CartPage = () => {
     fetchAddress();
   }, [token, userId]);
 
-  // Save or update address in backend
+  // Update quantity
+  const handleUpdateQuantity = async (itemId, newQuantity) => {
+    if (newQuantity < 1) return;
+
+    try {
+      const { data } = await axios.put(
+        `http://localhost:5000/api/user/cart/updateCartItem/${itemId}`,
+        { quantity: newQuantity },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updatedItems = cartItems.map((item) =>
+        item._id === itemId ? data : item
+      );
+      setCartItems(updatedItems);
+      calculatePriceDetails(updatedItems);
+    } catch (err) {
+      console.error("Error updating quantity:", err);
+    }
+  };
+
+  // Remove item
+  const handleRemoveItem = async (cartId) => {
+    try {
+      await axios.delete(
+        `http://localhost:5000/api/user/cart/removeCartItem/${cartId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      // Remove the item from state
+      const updatedItems = cartItems.filter((item) => item._id !== cartId);
+      setCartItems(updatedItems);
+
+      // Recalculate price details
+      calculatePriceDetails(updatedItems);
+    } catch (err) {
+      console.error("Error removing item:", err);
+    }
+  };
+
+  // Save or update address
   const handleAddressChange = async () => {
     try {
       const payload = { ...newAddress };
 
       if (address) {
-        // Update
         await axios.put(
           `http://localhost:5000/api/user/address/updateAddress/${address._id}`,
           payload,
@@ -92,13 +134,12 @@ const CartPage = () => {
         );
         setAddress({ ...payload, _id: address._id });
       } else {
-        // Create
         const { data } = await axios.post(
           "http://localhost:5000/api/user/address/addAddress",
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        setAddress(data.address); // data.address contains the saved object
+        setAddress(data.address);
       }
 
       setShowAddressForm(false);
@@ -123,7 +164,6 @@ const CartPage = () => {
   return (
     <Container className="mt-4">
       <Row>
-        {/* Left side: Address + Cart */}
         <Col
           md={8}
           style={{ display: "flex", flexDirection: "column", height: "80vh" }}
@@ -283,15 +323,19 @@ const CartPage = () => {
           </Card>
 
           {/* Cart Items */}
+          {/* Cart Items */}
           <div style={{ overflowY: "auto", flex: 1 }}>
             <h2>Cart items:</h2>
             {cartItems.length === 0 ? (
               <Alert variant="info">Your cart is empty.</Alert>
             ) : (
               cartItems.map((item) => (
-                <Card key={item.product} className="mb-3 shadow-sm">
+                <Card
+                  key={item._id || item.product._id}
+                  className="mb-3 shadow-sm"
+                >
                   <Card.Body>
-                    <Row>
+                    <Row className="align-items-center">
                       <Col md={2}>
                         <img
                           src={item.image || "default.png"}
@@ -301,15 +345,31 @@ const CartPage = () => {
                       </Col>
                       <Col md={6}>
                         <h6>{item.name}</h6>
+                        <div>Price: ₹{item.price}</div>{" "}
+                        {/* Show product price */}
                         <div className="d-flex align-items-center mt-2">
-                          <Button variant="outline-secondary" size="sm">
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() =>
+                              handleUpdateQuantity(item._id, item.quantity - 1)
+                            }
+                          >
                             -
                           </Button>
                           <div className="mx-3">{item.quantity}</div>
-                          <Button variant="outline-secondary" size="sm">
+                          <Button
+                            variant="outline-secondary"
+                            size="sm"
+                            onClick={() =>
+                              handleUpdateQuantity(item._id, item.quantity + 1)
+                            }
+                          >
                             +
                           </Button>
                         </div>
+                        <div>Total: ₹{item.price * item.quantity}</div>{" "}
+                        {/* Item total */}
                         <div className="mt-3">
                           <Button
                             variant="outline-secondary"
@@ -318,7 +378,11 @@ const CartPage = () => {
                           >
                             SAVE FOR LATER
                           </Button>
-                          <Button variant="outline-danger" size="sm">
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={() => handleRemoveItem(item._id)}
+                          >
                             REMOVE
                           </Button>
                         </div>
@@ -331,7 +395,7 @@ const CartPage = () => {
           </div>
         </Col>
 
-        {/* Right side: Price details */}
+        {/* Price details */}
         <Col
           md={4}
           style={{ position: "sticky", top: "20px", height: "fit-content" }}
@@ -363,17 +427,19 @@ const CartPage = () => {
               <div className="text-success small mt-2">
                 You will save ₹{priceDetails.saved} on this order
               </div>
-              <Button
-                variant="warning"
-                className="w-100 mt-3 fw-bold"
-                style={{
-                  color: "#fff",
-                  backgroundColor: "#ff5722",
-                  border: "none",
-                }}
-              >
-                PLACE ORDER
-              </Button>
+              <Link to="/orders">
+                <Button
+                  variant="warning"
+                  className="w-100 mt-3 fw-bold"
+                  style={{
+                    color: "#fff",
+                    backgroundColor: "#ff5722",
+                    border: "none",
+                  }}
+                >
+                  PLACE ORDER
+                </Button>
+              </Link>
             </Card.Body>
           </Card>
         </Col>
