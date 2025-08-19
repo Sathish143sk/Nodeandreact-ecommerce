@@ -16,7 +16,6 @@ const createCategory = async (req, res) => {
   }
 };
 
-
 // Get all categories
 const getAllCategories = async (req, res) => {
   const search = req.query.search || "";
@@ -30,7 +29,6 @@ const getAllCategories = async (req, res) => {
   }
 };
 
-
 // Get single category by ID
 const getCategoryById = async (req, res) => {
   try {
@@ -43,15 +41,23 @@ const getCategoryById = async (req, res) => {
   }
 };
 
-// Update category
+// Update category (with image support)
 const updateCategory = async (req, res) => {
   try {
     const { name, description } = req.body;
+
+    // Build update object
+    const updateData = { name, description };
+    if (req.file) {
+      updateData.image = req.file.filename; // Add image if uploaded
+    }
+
     const category = await Category.findByIdAndUpdate(
       req.params.id,
-      { name, description },
+      updateData,
       { new: true }
     );
+
     if (!category) return res.status(404).json({ message: "Category not found" });
 
     res.json(category);

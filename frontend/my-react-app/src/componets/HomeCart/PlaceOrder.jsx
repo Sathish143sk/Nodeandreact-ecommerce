@@ -11,82 +11,84 @@ const PlaceOrder = () => {
 
   const token = localStorage.getItem("userToken");
 
+  // ✅ Load cart from localStorage dynamically
   useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
+    const fetchCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCart(storedCart);
 
-    const total = storedCart.reduce((acc, item) => {
-      const price = Number(item.price) || 0; // fallback to 0 if not a number
-      const qty = Number(item.qty) || 0; // fallback to 0 if not a number
-      return acc + price * qty;
-    }, 0);
+      const total = storedCart.reduce((acc, item) => {
+        const price = Number(item.price) || 0;
+        const qty = Number(item.quantity) || 0;
+        return acc + price * qty;
+      }, 0);
 
-    setTotalAmount(total.toFixed(2));
+      setTotalAmount(total);
+    };
+
+    // Fetch immediately
+    fetchCart();
+
+    // Optional: listen to localStorage changes from other tabs
+    const handleStorageChange = () => fetchCart();
+    window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  // ✅ fetch all user addresses
+  // ✅ Fetch user addresses
   useEffect(() => {
     const fetchAddress = async () => {
       if (!token) return;
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/user/address/getUserAddresses`,
+          "http://localhost:5000/api/user/address/getUserAddresses",
           { headers: { Authorization: `Bearer ${token}` } }
         );
-
         if (data.length > 0) {
-          setAddress(data[0]); // pick the first address (or allow selection later)
+          setAddress(data[0]); // select first address for now
         }
       } catch (err) {
         console.error("Error fetching address:", err);
       }
     };
-
     fetchAddress();
   }, [token]);
 
-  // ✅ Handle Place Order -> go to payment page or complete COD
+  // ✅ Place Order
   const handlePlaceOrder = async () => {
     try {
       if (!cart.length) {
         alert("Cart is empty!");
         return;
       }
-
-      if (!address) {
-        alert("Please add a shipping address.");
+      if (!address?._id) {
+        alert("Please select a saved shipping address.");
         return;
       }
 
-      if (paymentMethod === "COD") {
-        const { data } = await axios.post(
-          "http://localhost:5000/api/order/place",
-          { cart, address, totalAmount, paymentMethod },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+      const { data } = await axios.post(
+        "http://localhost:5000/api/orders/place",
+        {
+          orderItems: cart.map((item) => ({
+            product: item._id || item.product, // always send productId
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+          shippingAddress: address._id, // ✅ send only address ID
+          totalPrice: totalAmount, // ✅ number
+          paymentMethod, // COD / UPI / Card
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-        alert("Order placed successfully with COD!");
-        navigate("/order-success", { state: { order: data } });
-      } else {
-        // For online payments
-        const { data } = await axios.post(
-          "http://localhost:5000/api/payment",
-          { amount: totalAmount, paymentMethod },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        navigate("/payment", {
-          state: {
-            paymentData: data,
-            cart,
-            address,
-            totalAmount,
-            paymentMethod,
-          },
-        });
-      }
+      alert("Order placed successfully!");
+      navigate("/myorders", { state: { order: data } });
     } catch (error) {
-      console.error("Error placing order:", error);
+      console.error("Error placing order:", error.response?.data || error);
+      alert("Failed to place order.");
     }
   };
 
@@ -114,21 +116,16 @@ const PlaceOrder = () => {
           cart.map((item, index) => (
             <div key={index} className="d-flex justify-content-between">
               <span>
-                {item.name} x {item.qty}
+                {item.name} x {item.quantity} @ ₹{item.price}
               </span>
-              <span>
-                ₹
-                {((Number(item.price) || 0) * (Number(item.qty) || 0)).toFixed(
-                  2
-                )}
-              </span>
+              <span>= ₹{item.price * item.quantity}</span>
             </div>
           ))
         ) : (
           <p>No items in cart</p>
         )}
         <hr />
-        <h5>Total: ₹{totalAmount}</h5>
+        <h5>Total: ₹{totalAmount.toFixed(2)}</h5>
       </div>
 
       {/* Payment Method */}

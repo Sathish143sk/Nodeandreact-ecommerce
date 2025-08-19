@@ -124,7 +124,7 @@ const UserProductsCarousel = () => {
       <Carousel
         ref={carouselRef}
         indicators={false}
-        controls={false}
+        controls={true}
         interval={null}
       >
         {productChunks.map((chunk, index) => (
@@ -138,7 +138,7 @@ const UserProductsCarousel = () => {
                 >
                   <Card.Img
                     variant="top"
-                    src={prod.image}
+                    src={`http://localhost:5000/uploads/products/${prod.image}`} // <-- add your backend path
                     style={{ height: "150px", objectFit: "contain" }}
                   />
                   <Card.Body className="p-2">

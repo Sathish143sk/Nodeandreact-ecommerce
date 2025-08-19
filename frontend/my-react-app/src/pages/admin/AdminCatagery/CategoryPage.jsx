@@ -53,11 +53,11 @@ const CategoryPage = () => {
     try {
       if (editingCategory) {
         await axios.put(
-          `http://localhost:5000/api/admin/category/update/${editingCategory._id}`,
+          `http://localhost:5000/api/admin/category/updateCategory/${editingCategory._id}`,
           formData,
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "multipart/form-data",  
               Authorization: `Bearer ${token}`,
             },
           }
@@ -65,7 +65,7 @@ const CategoryPage = () => {
         alert("Category updated successfully!");
       } else {
         await axios.post(
-          "http://localhost:5000/api/admin/category/addCategory ",
+          "http://localhost:5000/api/admin/category/addCategory",
           formData,
           {
             headers: {
@@ -190,7 +190,7 @@ const CategoryPage = () => {
                       <td>
                         {cat.image && (
                           <img
-                            src={`http://localhost:5000${cat.image}`}
+                            src={`http://localhost:5000/uploads/categories/${cat.image}`}
                             alt={cat.name}
                             style={{
                               width: "80px",

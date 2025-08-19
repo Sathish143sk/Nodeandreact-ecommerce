@@ -24,7 +24,9 @@ const AdminSidebar = () => {
         <Nav.Link as={NavLink} to="/admin/products">
           Products
         </Nav.Link>
-        <Nav.Link href="#">Orders</Nav.Link>
+        <Nav.Link as={NavLink} to={"/admin/orders"}>
+          Orders
+        </Nav.Link>
         <Nav.Link as={NavLink} to="/admin/users">
           Users
         </Nav.Link>

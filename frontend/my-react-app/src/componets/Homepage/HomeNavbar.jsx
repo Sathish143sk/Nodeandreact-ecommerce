@@ -77,10 +77,14 @@ const FlipkartNavbar = () => {
             </Dropdown.Toggle>
 
             <Dropdown.Menu style={{ minWidth: "220px" }}>
-              <Dropdown.Item as={Link} to="/user/profile">My Profile</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/user/profile">
+                My Profile
+              </Dropdown.Item>
               <Dropdown.Item>SuperCoin Zone</Dropdown.Item>
               <Dropdown.Item>Flipkart Plus Zone</Dropdown.Item>
-              <Dropdown.Item>Orders</Dropdown.Item>
+              <Dropdown.Item as={Link} to="/myorders">
+                Orders
+              </Dropdown.Item>
               <Dropdown.Item>Wishlist (7)</Dropdown.Item>
               <Dropdown.Item>Coupons</Dropdown.Item>
               <Dropdown.Item>Gift Cards</Dropdown.Item>

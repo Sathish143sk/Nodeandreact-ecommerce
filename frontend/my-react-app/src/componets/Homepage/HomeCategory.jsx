@@ -32,12 +32,16 @@ const CategoryNav = () => {
   if (loading) {
     return <p style={{ textAlign: "center" }}>Loading categories...</p>;
   }
-
+  // http://localhost:5000/uploads/products/${cat.image}
   return (
     <div style={styles.container}>
       {categories.map((cat, index) => (
         <div key={index} style={styles.item}>
-          <img src={cat.image} alt={cat.name} style={styles.image} />
+          <img
+            src={`http://localhost:5000/uploads/categories/${cat.image}`}
+            alt={cat.name}
+            style={styles.image}
+          />
           <div style={styles.label}>
             {cat.name} {cat.dropdown && <span style={styles.arrow}>▼</span>}
           </div>

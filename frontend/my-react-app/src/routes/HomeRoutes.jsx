@@ -4,6 +4,7 @@ import ProtectedRoute from "../pages/ProtectedRoute";
 import HomeCartPage from "../componets/HomeCart/HomeCartPage";
 import ProfilePage from "../componets/HomeCart/ProfilePage";
 import PlaceOrder from "../componets/HomeCart/PlaceOrder";
+import MyOrders from "../componets/HomeCart/MyOrders";
 const HomeRoutes = () => {
   return (
     <>
@@ -28,6 +29,14 @@ const HomeRoutes = () => {
         element={
           <ProtectedRoute>
             <PlaceOrder />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/myorders"
+        element={
+          <ProtectedRoute>
+            <MyOrders />
           </ProtectedRoute>
         }
       />

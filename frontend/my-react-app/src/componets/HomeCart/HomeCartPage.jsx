@@ -160,6 +160,14 @@ const CartPage = () => {
       console.error("Error deleting address:", err);
     }
   };
+  // Toggle selected state for an item
+  const handleToggleSelect = (productId) => {
+    const updatedCart = cartItems.map((item) =>
+      item._id === productId ? { ...item, selected: !item.selected } : item
+    );
+    setCart(updatedCart); // update state
+    localStorage.setItem("cart", JSON.stringify(updatedCart)); // update localStorage
+  };
 
   return (
     <Container className="mt-4">
@@ -336,6 +344,16 @@ const CartPage = () => {
                 >
                   <Card.Body>
                     <Row className="align-items-center">
+                      {/* Checkbox */}
+                      <Col md={1}>
+                        <input
+                          type="checkbox"
+                          checked={item.selected || false}
+                          onChange={() => handleToggleSelect(item._id)}
+                        />
+                      </Col>
+
+                      {/* Product Image */}
                       <Col md={2}>
                         <img
                           src={item.image || "default.png"}
@@ -343,10 +361,11 @@ const CartPage = () => {
                           className="img-fluid rounded"
                         />
                       </Col>
+
+                      {/* Product Details */}
                       <Col md={6}>
                         <h6>{item.name}</h6>
-                        <div>Price: ₹{item.price}</div>{" "}
-                        {/* Show product price */}
+                        <div>Price: ₹{item.price}</div>
                         <div className="d-flex align-items-center mt-2">
                           <Button
                             variant="outline-secondary"
@@ -368,8 +387,7 @@ const CartPage = () => {
                             +
                           </Button>
                         </div>
-                        <div>Total: ₹{item.price * item.quantity}</div>{" "}
-                        {/* Item total */}
+                        <div>Total: ₹{item.price * item.quantity}</div>
                         <div className="mt-3">
                           <Button
                             variant="outline-secondary"
