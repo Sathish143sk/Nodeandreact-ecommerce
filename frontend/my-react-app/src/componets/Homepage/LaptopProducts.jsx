@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Carousel, Card, Spinner } from "react-bootstrap";
+import { Carousel, Card, Spinner,Button} from "react-bootstrap";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import axios from "axios";
-
+const API_URL = import.meta.env.REACT_APP_API_URL;
+console.log(API_URL);
 const UserLaptopCarousel = () => {
   const carouselRef = useRef(null);
   const [products, setProducts] = useState([]);
@@ -12,15 +13,19 @@ const UserLaptopCarousel = () => {
   useEffect(() => {
     const fetchUserProducts = async () => {
       try {
-        // Public endpoint, no token required if backend allows
         const response = await axios.get(
-          "http://localhost:5000/api/product/getUserProducts",
+          `http://localhost:5000/api/product/getUserProducts`,
           { headers: { "Cache-Control": "no-cache" } }
         );
 
-        // Optional: filter only visible products if backend sends a flag
-        const visibleProducts = response.data.filter(
-          (p) => p.isVisible !== false && p.category.name === "Laptop"
+        // ✅ Extract products safely
+        const productsArray = Array.isArray(response.data)
+          ? response.data
+          : response.data.products || [];
+
+        // ✅ Apply filtering only on array
+        const visibleProducts = productsArray.filter(
+          (p) => p.isVisible !== false && p.category?.name === "Laptop"
         );
 
         setProducts(visibleProducts);
@@ -34,6 +39,28 @@ const UserLaptopCarousel = () => {
 
     fetchUserProducts();
   }, []);
+
+  // Add to Cart handler
+  const handleAddToCart = async (product) => {
+    const token = localStorage.getItem("userToken");
+    if (!token) {
+      alert("Please login to add items to cart");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:5000/api/user/cart/addToCart",
+        { productId: product._id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("✅ Item added to cart!");
+      fetchCart();
+    } catch (error) {
+      console.error("Error adding to cart", error);
+      // alert("❌ Failed to add item to cart");
+    }
+  };
 
   const chunkArray = (arr, size) => {
     return arr.reduce((chunks, item, index) => {
@@ -93,7 +120,7 @@ const UserLaptopCarousel = () => {
                 >
                   <Card.Img
                     variant="top"
-                    src={prod.image}
+                    src={`http://localhost:5000/uploads/products/${prod.image}`}
                     style={{ height: "150px", objectFit: "contain" }}
                   />
                   <Card.Body className="p-2">
@@ -103,6 +130,13 @@ const UserLaptopCarousel = () => {
                     <Card.Text style={{ fontSize: "13px", color: "red" }}>
                       {prod.price}
                     </Card.Text>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleAddToCart(prod)}
+                    >
+                      Add to Cart
+                    </Button>
                   </Card.Body>
                 </Card>
               ))}

@@ -5,6 +5,7 @@ import HomeCartPage from "../componets/HomeCart/HomeCartPage";
 import ProfilePage from "../componets/HomeCart/ProfilePage";
 import PlaceOrder from "../componets/HomeCart/PlaceOrder";
 import MyOrders from "../componets/HomeCart/MyOrders";
+
 const HomeRoutes = () => {
   return (
     <>
@@ -40,6 +41,7 @@ const HomeRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
     </>
   );
 };

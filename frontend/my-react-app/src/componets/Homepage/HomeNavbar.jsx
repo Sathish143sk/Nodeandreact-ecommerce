@@ -18,7 +18,7 @@ import {
 import { Link } from "react-router-dom";
 const FlipkartNavbar = () => {
   const [showProfile, setShowProfile] = useState(false);
-
+  const [cartCount, setCartCount] = useState(0);
   return (
     <Navbar bg="white" className="shadow-sm py-2" expand="lg" fixed="top">
       <Container fluid className="px-4">
@@ -101,9 +101,23 @@ const FlipkartNavbar = () => {
           >
             <div style={{ position: "relative" }}>
               <FaShoppingCart className="me-1" size={20} />
+              {/* Cart Count Badge */}
+              <Badge
+                bg="danger"
+                pill
+                style={{
+                  position: "absolute",
+                  top: "-8px",
+                  right: "-10px",
+                  fontSize: "10px",
+                }}
+              >
+                {cartCount}
+              </Badge>
             </div>
             Cart
           </Nav.Link>
+
           <Nav.Link
             href="#"
             className="d-flex align-items-center text-dark mx-2"

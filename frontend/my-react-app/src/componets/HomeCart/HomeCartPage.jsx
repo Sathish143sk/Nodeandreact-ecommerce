@@ -3,7 +3,8 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Alert } from "react-bootstrap";
 import axios from "axios";
 import { Link } from "react-router-dom";
-
+import HomeNavbar from "../Homepage/HomeNavbar";
+import "./Homecss.css";
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
   const [priceDetails, setPriceDetails] = useState({
@@ -170,299 +171,328 @@ const CartPage = () => {
   };
 
   return (
-    <Container className="mt-4">
-      <Row>
-        <Col
-          md={8}
-          style={{ display: "flex", flexDirection: "column", height: "80vh" }}
-        >
-          {/* Address */}
-          <Card className="mb-3 shadow-sm">
-            <Card.Body>
-              {address ? (
-                <>
-                  <h5>Delivery Address</h5>
-                  <strong>Deliver to:</strong> {address.fullName},{" "}
-                  {address.postalCode}
-                  <br />
-                  {address.street}, {address.city}, {address.state},{" "}
-                  {address.country}
-                  <Button
-                    variant="outline-primary"
-                    size="sm"
-                    className="float-end ms-2"
-                    onClick={() => {
-                      setNewAddress({ ...address });
-                      setShowAddressForm(true);
-                    }}
-                  >
-                    Change
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    size="sm"
-                    className="float-end"
-                    onClick={handleAddressDelete}
-                  >
-                    Delete
-                  </Button>
-                </>
-              ) : (
-                <Alert variant="info">
-                  No address found.
-                  <Button
-                    variant="link"
-                    className="p-0 ms-2"
-                    onClick={() => setShowAddressForm(true)}
-                  >
-                    Add Address
-                  </Button>
-                </Alert>
-              )}
+    <div>
+      <div>
+        <HomeNavbar />
+      </div>
+      <div className="contendpage">
+        <Container>
+          <Row>
+            <Col
+              md={8}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                height: "80vh",
+              }}
+            >
+              {/* Address */}
+              <Card className="mb-3 shadow-sm">
+                <Card.Body>
+                  {address ? (
+                    <>
+                      <h5>Delivery Address</h5>
+                      <strong>Deliver to:</strong> {address.fullName},{" "}
+                      {address.postalCode}
+                      <br />
+                      {address.street}, {address.city}, {address.state},{" "}
+                      {address.country}
+                      <Button
+                        variant="outline-primary"
+                        size="sm"
+                        className="float-end ms-2"
+                        onClick={() => {
+                          setNewAddress({ ...address });
+                          setShowAddressForm(true);
+                        }}
+                      >
+                        Change
+                      </Button>
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        className="float-end"
+                        onClick={handleAddressDelete}
+                      >
+                        Delete
+                      </Button>
+                    </>
+                  ) : (
+                    <Alert variant="info">
+                      No address found.
+                      <Button
+                        variant="link"
+                        className="p-0 ms-2"
+                        onClick={() => setShowAddressForm(true)}
+                      >
+                        Add Address
+                      </Button>
+                    </Alert>
+                  )}
 
-              {showAddressForm && (
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="Full Name"
-                    value={newAddress.fullName}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, fullName: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="Phone Number"
-                    value={newAddress.phoneNumber}
-                    onChange={(e) =>
-                      setNewAddress({
-                        ...newAddress,
-                        phoneNumber: e.target.value,
-                      })
-                    }
-                  />
-                  <textarea
-                    className="form-control mb-2"
-                    placeholder="Street / Address Details"
-                    value={newAddress.street}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, street: e.target.value })
-                    }
-                  ></textarea>
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="City"
-                    value={newAddress.city}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, city: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="State"
-                    value={newAddress.state}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, state: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="Postal Code"
-                    value={newAddress.postalCode}
-                    onChange={(e) =>
-                      setNewAddress({
-                        ...newAddress,
-                        postalCode: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    className="form-control mb-2"
-                    placeholder="Country"
-                    value={newAddress.country}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, country: e.target.value })
-                    }
-                  />
-                  <div className="form-check mb-2">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      checked={newAddress.isDefault}
-                      onChange={(e) =>
-                        setNewAddress({
-                          ...newAddress,
-                          isDefault: e.target.checked,
-                        })
-                      }
-                      id="defaultAddress"
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="defaultAddress"
-                    >
-                      Set as default address
-                    </label>
-                  </div>
-                  <Button
-                    variant="success"
-                    size="sm"
-                    onClick={handleAddressChange}
-                  >
-                    Save
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="ms-2"
-                    onClick={() => setShowAddressForm(false)}
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-
-          {/* Cart Items */}
-          {/* Cart Items */}
-          <div style={{ overflowY: "auto", flex: 1 }}>
-            <h2>Cart items:</h2>
-            {cartItems.length === 0 ? (
-              <Alert variant="info">Your cart is empty.</Alert>
-            ) : (
-              cartItems.map((item) => (
-                <Card
-                  key={item._id || item.product._id}
-                  className="mb-3 shadow-sm"
-                >
-                  <Card.Body>
-                    <Row className="align-items-center">
-                      {/* Checkbox */}
-                      <Col md={1}>
+                  {showAddressForm && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Full Name"
+                        value={newAddress.fullName}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            fullName: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Phone Number"
+                        value={newAddress.phoneNumber}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            phoneNumber: e.target.value,
+                          })
+                        }
+                      />
+                      <textarea
+                        className="form-control mb-2"
+                        placeholder="Street / Address Details"
+                        value={newAddress.street}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            street: e.target.value,
+                          })
+                        }
+                      ></textarea>
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="City"
+                        value={newAddress.city}
+                        onChange={(e) =>
+                          setNewAddress({ ...newAddress, city: e.target.value })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="State"
+                        value={newAddress.state}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            state: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Postal Code"
+                        value={newAddress.postalCode}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            postalCode: e.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Country"
+                        value={newAddress.country}
+                        onChange={(e) =>
+                          setNewAddress({
+                            ...newAddress,
+                            country: e.target.value,
+                          })
+                        }
+                      />
+                      <div className="form-check mb-2">
                         <input
+                          className="form-check-input"
                           type="checkbox"
-                          checked={item.selected || false}
-                          onChange={() => handleToggleSelect(item._id)}
+                          checked={newAddress.isDefault}
+                          onChange={(e) =>
+                            setNewAddress({
+                              ...newAddress,
+                              isDefault: e.target.checked,
+                            })
+                          }
+                          id="defaultAddress"
                         />
-                      </Col>
+                        <label
+                          className="form-check-label"
+                          htmlFor="defaultAddress"
+                        >
+                          Set as default address
+                        </label>
+                      </div>
+                      <Button
+                        variant="success"
+                        size="sm"
+                        onClick={handleAddressChange}
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="ms-2"
+                        onClick={() => setShowAddressForm(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
 
-                      {/* Product Image */}
-                      <Col md={2}>
-                        <img
-                          src={item.image || "default.png"}
-                          alt={item.name}
-                          className="img-fluid rounded"
-                        />
-                      </Col>
+              {/* Cart Items */}
+              {/* Cart Items */}
+              <div style={{ overflowY: "auto", flex: 1 }}>
+                <h2>Cart items:</h2>
+                {cartItems.length === 0 ? (
+                  <Alert variant="info">Your cart is empty.</Alert>
+                ) : (
+                  cartItems.map((item) => (
+                    <Card
+                      key={item._id || item.product._id}
+                      className="mb-3 shadow-sm"
+                    >
+                      <Card.Body>
+                        <Row className="align-items-center">
+                          {/* Checkbox */}
+                          <Col md={1}>
+                            <input
+                              type="checkbox"
+                              checked={item.selected || false}
+                              onChange={() => handleToggleSelect(item._id)}
+                            />
+                          </Col>
 
-                      {/* Product Details */}
-                      <Col md={6}>
-                        <h6>{item.name}</h6>
-                        <div>Price: ₹{item.price}</div>
-                        <div className="d-flex align-items-center mt-2">
-                          <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            onClick={() =>
-                              handleUpdateQuantity(item._id, item.quantity - 1)
-                            }
-                          >
-                            -
-                          </Button>
-                          <div className="mx-3">{item.quantity}</div>
-                          <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            onClick={() =>
-                              handleUpdateQuantity(item._id, item.quantity + 1)
-                            }
-                          >
-                            +
-                          </Button>
-                        </div>
-                        <div>Total: ₹{item.price * item.quantity}</div>
-                        <div className="mt-3">
-                          <Button
-                            variant="outline-secondary"
-                            size="sm"
-                            className="me-2"
-                          >
-                            SAVE FOR LATER
-                          </Button>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleRemoveItem(item._id)}
-                          >
-                            REMOVE
-                          </Button>
-                        </div>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              ))
-            )}
-          </div>
-        </Col>
+                          {/* Product Image */}
+                          <Col md={2}>
+                            <img
+                              src={item.image || "default.png"}
+                              alt={item.name}
+                              className="img-fluid rounded"
+                            />
+                          </Col>
 
-        {/* Price details */}
-        <Col
-          md={4}
-          style={{ position: "sticky", top: "20px", height: "fit-content" }}
-        >
-          <Card className="shadow-sm">
-            <Card.Body>
-              <h6 className="mb-3">PRICE DETAILS</h6>
-              <div className="d-flex justify-content-between">
-                <span>Price ({cartItems.length} items)</span>
-                <span>₹{priceDetails.price}</span>
+                          {/* Product Details */}
+                          <Col md={6}>
+                            <h6>{item.name}</h6>
+                            <div>Price: ₹{item.price}</div>
+                            <div className="d-flex align-items-center mt-2">
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={() =>
+                                  handleUpdateQuantity(
+                                    item._id,
+                                    item.quantity - 1
+                                  )
+                                }
+                              >
+                                -
+                              </Button>
+                              <div className="mx-3">{item.quantity}</div>
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={() =>
+                                  handleUpdateQuantity(
+                                    item._id,
+                                    item.quantity + 1
+                                  )
+                                }
+                              >
+                                +
+                              </Button>
+                            </div>
+                            <div>Total: ₹{item.price * item.quantity}</div>
+                            <div className="mt-3">
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                className="me-2"
+                              >
+                                SAVE FOR LATER
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleRemoveItem(item._id)}
+                              >
+                                REMOVE
+                              </Button>
+                            </div>
+                          </Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  ))
+                )}
               </div>
-              <div className="d-flex justify-content-between text-success">
-                <span>Discount</span>
-                <span>- ₹{priceDetails.discount}</span>
-              </div>
-              <div className="d-flex justify-content-between text-success">
-                <span>Coupons for you</span>
-                <span>- ₹{priceDetails.coupon}</span>
-              </div>
-              <div className="d-flex justify-content-between">
-                <span>Protect Promise Fee</span>
-                <span>₹{priceDetails.fee}</span>
-              </div>
-              <hr />
-              <div className="d-flex justify-content-between fw-bold">
-                <span>Total Amount</span>
-                <span>₹{priceDetails.total}</span>
-              </div>
-              <div className="text-success small mt-2">
-                You will save ₹{priceDetails.saved} on this order
-              </div>
-              <Link to="/orders">
-                <Button
-                  variant="warning"
-                  className="w-100 mt-3 fw-bold"
-                  style={{
-                    color: "#fff",
-                    backgroundColor: "#ff5722",
-                    border: "none",
-                  }}
-                >
-                  PLACE ORDER
-                </Button>
-              </Link>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+            </Col>
+
+            {/* Price details */}
+            <Col
+              md={4}
+              style={{ position: "sticky", top: "20px", height: "fit-content" }}
+            >
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <h6 className="mb-3">PRICE DETAILS</h6>
+                  <div className="d-flex justify-content-between">
+                    <span>Price ({cartItems.length} items)</span>
+                    <span>₹{priceDetails.price}</span>
+                  </div>
+                  <div className="d-flex justify-content-between text-success">
+                    <span>Discount</span>
+                    <span>- ₹{priceDetails.discount}</span>
+                  </div>
+                  <div className="d-flex justify-content-between text-success">
+                    <span>Coupons for you</span>
+                    <span>- ₹{priceDetails.coupon}</span>
+                  </div>
+                  <div className="d-flex justify-content-between">
+                    <span>Protect Promise Fee</span>
+                    <span>₹{priceDetails.fee}</span>
+                  </div>
+                  <hr />
+                  <div className="d-flex justify-content-between fw-bold">
+                    <span>Total Amount</span>
+                    <span>₹{priceDetails.total}</span>
+                  </div>
+                  <div className="text-success small mt-2">
+                    You will save ₹{priceDetails.saved} on this order
+                  </div>
+                  <Link to="/orders">
+                    <Button
+                      variant="warning"
+                      className="w-100 mt-3 fw-bold"
+                      style={{
+                        color: "#fff",
+                        backgroundColor: "#ff5722",
+                        border: "none",
+                      }}
+                    >
+                      PLACE ORDER
+                    </Button>
+                  </Link>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </div>
   );
 };
 

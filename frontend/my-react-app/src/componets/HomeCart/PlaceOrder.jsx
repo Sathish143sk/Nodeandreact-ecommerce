@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import HomeNavbar from "../Homepage/HomeNavbar"
 const PlaceOrder = () => {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
@@ -94,10 +94,11 @@ const PlaceOrder = () => {
 
   return (
     <div className="container mt-4">
+      <HomeNavbar />
       <h2>Review Your Order</h2>
 
       {/* Address Section */}
-      <div className="card p-3 mt-3">
+      <div className="card p-3 mt-5">
         <h5>Shipping Address</h5>
         {address ? (
           <p>
